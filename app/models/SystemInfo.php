@@ -14,10 +14,14 @@ class SystemInfo extends Eloquent {
     // OR set guarded to an empty array to allow mass assignment of every field
     protected $guarded = array();
 
-     public function scopeGetProperty($query,$name){
+    public function scopeGetProperty($query,$name){
+        try{
     	return $query
     			->where("KEY", "=", $name)
     			->get()[0]->VALUE;
+        }catch(Exception $e){
+            return "";
+        }
 
     }
 

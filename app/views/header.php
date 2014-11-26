@@ -8,33 +8,37 @@
     <meta name="author" content="Muhammad Usman">
 
     <!-- The styles -->
-    <link id="bs-css" href="css/bootstrap-cerulean.min.css" rel="stylesheet">
+    <link id="bs-css" href="/css/bootstrap.min.css" rel="stylesheet">
     
-    <link href="css/charisma-app.css" rel="stylesheet">
-    <link href='bower_components/fullcalendar/dist/fullcalendar.css' rel='stylesheet'>
-    <link href='bower_components/fullcalendar/dist/fullcalendar.print.css' rel='stylesheet' media='print'>
-    <link href='bower_components/chosen/chosen.min.css' rel='stylesheet'>
-    <link href='bower_components/colorbox/example3/colorbox.css' rel='stylesheet'>
-    <link href='bower_components/responsive-tables/responsive-tables.css' rel='stylesheet'>
-    <link href='bower_components/bootstrap-tour/build/css/bootstrap-tour.min.css' rel='stylesheet'>
-    <link href='bower_components/bootstrap-table/dist/bootstrap-table.min.css' rel='stylesheet'>
-    <link href='bower_components/jquery-datetime/jquery.datetimepicker.css' rel='stylesheet'>
-    <link href='css/jquery.noty.css' rel='stylesheet'>
-    <link href='css/noty_theme_default.css' rel='stylesheet'>
-    <link href='css/datepicker.css' rel='stylesheet'>
-    <link href='css/elfinder.min.css' rel='stylesheet'>
-    <link href='css/elfinder.theme.css' rel='stylesheet'>
-    <link href='css/jquery.iphone.toggle.css' rel='stylesheet'>
-    <link href='css/uploadify.css' rel='stylesheet'>
-    <link href='css/animate.min.css' rel='stylesheet'>
+    <link href="/css/charisma-app.css" rel="stylesheet">
+    <link href='/bower_components/fullcalendar/dist/fullcalendar.css' rel='stylesheet'>
+    <link href='/bower_components/fullcalendar/dist/fullcalendar.print.css' rel='stylesheet' media='print'>
+    <link href='/bower_components/chosen/chosen.min.css' rel='stylesheet'>
+    <link href='/bower_components/colorbox/example3/colorbox.css' rel='stylesheet'>
+    <link href='/bower_components/responsive-tables/responsive-tables.css' rel='stylesheet'>
+    <link href='/bower_components/bootstrap-tour/build/css/bootstrap-tour.min.css' rel='stylesheet'>
+    <link href='/bower_components/datatables/media/css/dataTables.tableTools.css' rel='stylesheet'>
+    <!--<link href='bower_components/datatables/media/css/jquery.dataTables.css' rel='stylesheet'>-->
+    <link href='/bower_components/datatables/media/css/dataTables.bootstrap.css' rel='stylesheet'>
+    <link href='/bower_components/bootstrap-table/dist/bootstrap-table.min.css' rel='stylesheet'>
+    <link href='/bower_components/jquery-datetime/jquery.datetimepicker.css' rel='stylesheet'>
+    <link href='/css/jquery.noty.css' rel='stylesheet'>
+    <link href='/css/noty_theme_default.css' rel='stylesheet'>
+    <link href='/css/datepicker.css' rel='stylesheet'>
+    <link href='/css/elfinder.min.css' rel='stylesheet'>
+    <link href='/css/elfinder.theme.css' rel='stylesheet'>
+    <link href='/css/jquery.iphone.toggle.css' rel='stylesheet'>
+    <link href='/css/uploadify.css' rel='stylesheet'>
+    <link href='/css/animate.min.css' rel='stylesheet'>
     <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
     <link href='http://fonts.googleapis.com/css?family=Righteous' rel='stylesheet' type='text/css'>
 
 
     <!-- jQuery -->
-    <script src="bower_components/jquery/jquery.min.js"></script>
-    <script src="bower_components/tinymce/tinymce.min.js"></script>
-    <script src="bower_components/tinymce/jquery.tinymce.min.js"></script>
+    <script src="/bower_components/jquery/jquery.min.js"></script>
+    <script src="/bower_components/tinymce/tinymce.min.js"></script>
+    <script src="/bower_components/tinymce/jquery.tinymce.min.js"></script>
+
 
     <!-- The HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -60,22 +64,21 @@
             </button>
             <a class="navbar-brand" href="#"> <!--<img alt="Charisma Logo" src="img/logo20.png" class="hidden-xs"/>-->
                 <span class="navbar-brand-name">CONTEXTO</span>                
-                <span class="navbar-brand-description">Smart way to inform</span>
+                <span class="navbar-brand-description">Contextualizing and simplifying informarketing</span>
             </a>
-
-           
 
             <!-- user dropdown starts -->
             <div class="btn-group pull-right">
                 <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                    <i class="glyphicon glyphicon-user"></i><span class="hidden-sm hidden-xs"> <?php echo Session::get('user')->MSISDN; ?></span>
+                    <i class="glyphicon glyphicon-user"></i><span class="hidden-sm hidden-xs"> 
+                    <?php echo Session::get('user')->MSISDN; ?></span>
 
                     <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a href="#">Change Password</a></li>
-                    <li><a href="#">Account Settings</a></li>
-                    <li><a href="#">Withdraw</a></li>
+                    <li><a href="#" class="btn-change-password">Change Password</a></li>
+                    <!--<li><a href="#">Account Settings</a></li>
+-                   <li><a href="#">Withdraw</a></li>-->
                     <li class="divider"></li>
                     <li><a href="logout">Logout</a></li>
                 </ul>
@@ -84,6 +87,12 @@
             </div>
             <!-- user dropdown ends -->
            
+
+            <!--<div class="btn-group pull-right animated tada">
+                        <ul class="collapse navbar-collapse nav navbar-nav top-menu label-header">
+                        <li><i class="glyphicon glyphicon-envelope"></i> <span class="hidden-md">Keyword : <?= Session::get('user')->ADDITIONALKEYWORD + Session::get('accounttypes')[Session::get('user')->ACCOUNTTYPEID]->KEYWORDLIMIT;; ?></span></li>
+                        <ul>
+             </div> -->
 
             <div class="btn-group pull-right animated tada">
                         <ul class="collapse navbar-collapse nav navbar-nav top-menu label-header">
@@ -96,6 +105,7 @@
                         <li><i class="glyphicon glyphicon-envelope"></i> <span class="hidden-md">Credits : <?= number_format(Session::get('user')->CREDIT,2); ?></span></li>
                         <ul>
             </div>  
+
 
         </div>
     </div>
@@ -122,8 +132,10 @@
                             <a href="#"><i class="glyphicon glyphicon-plus"></i><span> Contacts</span></a>
                             <ul class="nav nav-pills nav-stacked">
                                 <li><a href="contacts">New</a></li>
+                                <li><a href="contacts-import">Import</a></li>
                                 <li><a href="contacts-manage">Update</a></li>
                                 <li><a href="contacts-group">Group</a></li>
+                                <li><a href="contacts-grouplist">Group Contact List</a></li>
                             </ul>
                             <li>
                         </li>
@@ -131,7 +143,8 @@
                             <a href="#"><i class="glyphicon glyphicon-plus"></i><span> Keywords</span></a>
                             <ul class="nav nav-pills nav-stacked">
                                 <li><a href="keywords">New</a></li>
-                                <li><a href="keywords-update">Update</a></li>
+                                <li><a href="keywords-update">Update Notification</a></li>
+                                <li><a href="keywords-buy">Purchase</a></li>
                             </ul>
                             <li>
                         </li>
@@ -147,6 +160,7 @@
                         <li class="accordion">
                             <a href="#"><i class="glyphicon glyphicon-plus"></i><span> Reports</span></a>
                             <ul class="nav nav-pills nav-stacked">
+                                <li><a href="report-transactions">Transactions</a></li>
                                 <li><a href="report-keyword">Keywords</a></li>
                                 <li><a href="report-mt">Sent</a></li>
                                 <li><a href="report-mo">Inbox</a></li>
@@ -204,47 +218,111 @@
     </footer>
 <?php } ?>
 
+<div class="modal fade" id="changePassword" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h3>Change Password</h3>
+                </div>
+                <div class="modal-body">
+                    <form role="form">                    
+                    <div class="form-group">
+                        <label for="n_password">Password</label>
+                        <input type="password" class="form-control" id="n_password" placeholder="password">
+                    </div>
+                    <div class="form-group">
+                        <label for="n_password">New Password</label>
+                        <input type="password" class="form-control" id="n_newpassword" placeholder="password">
+                    </div>
+                    <div class="form-group">
+                        <label for="n_password">Confirm Password</label>
+                        <input type="password" class="form-control" id="n_confirmpassword" placeholder="password">
+                    </div>
+                </form>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn btn-default" data-dismiss="modal">Close</a>
+                    <a onclick="javascript:changepassword()" class="btn btn-primary">Save</a>
+                </div>
+            </div>
+        </div>
+</div>
+
+
 </div><!--/.fluid-container-->
 
 <!-- external javascript -->
 
-<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<div style="display:none;">
+<button class="cp_success btn btn-primary noty" data-noty-options="{&quot;text&quot;:&quot;Change Password Complete&quot;,&quot;layout&quot;:&quot;topCenter&quot;,&quot;type&quot;:&quot;alert&quot;,&quot;animateOpen&quot;: {&quot;opacity&quot;: &quot;show&quot;}}">
+    
+</button>
+
+<button  class="cp_error btn btn-primary noty" data-noty-options="{&quot;text&quot;:&quot;Change Password Failed&quot;,&quot;layout&quot;:&quot;topCenter&quot;,&quot;type&quot;:&quot;error&quot;}">
+    
+                    </button>
+</div>
+
+<script type="text/javascript">
+    function changepassword(){
+        var url = "change-password";
+        var params = {password:$("#n_password").val() , newpassword : $("#n_newpassword").val() , confirmpassword : $("#n_confirmpassword").val()};    
+        $.post(url,params,function(result,status){
+            console.log(result);
+            //data = JSON.parse(result);
+            if(result.title == 'Success'){
+                $('.cp_success').click();
+                $('#changePassword').modal('hide');
+            }else{
+                $('.cp_error').click();
+                $('#changePassword').modal('hide');
+            }
+        });
+    }
+</script>
+
+<script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
 <!-- library for cookie management -->
-<script src="js/jquery.cookie.js"></script>
+<script src="/js/jquery.cookie.js"></script>
 <!-- calender plugin -->
-<script src='bower_components/moment/min/moment.min.js'></script>
-<script src='bower_components/fullcalendar/dist/fullcalendar.min.js'></script>
+<script src='/bower_components/moment/min/moment.min.js'></script>
+<script src='/bower_components/fullcalendar/dist/fullcalendar.min.js'></script>
 <!-- data table plugin -->
-<script src='js/jquery.dataTables.min.js'></script>
-<script src="js/bootstrap-datepicker.js"></script>
+<script src="/bower_components/datatables/jquery.dataTables.js"></script>
+<script src="/bower_components/datatables/dataTables.tableTools.js"></script>
+<script src="/bower_components/datatables/dataTables.bootstrap.js"></script>
 
+<script src="/js/bootstrap-datepicker.js"></script>
 <!-- select or dropdown enhancer -->
-<script src="bower_components/chosen/chosen.jquery.min.js"></script>
+<script src="/bower_components/chosen/chosen.jquery.min.js"></script>
 <!-- plugin for gallery image view -->
-<script src="bower_components/colorbox/jquery.colorbox-min.js"></script>
+<script src="/bower_components/colorbox/jquery.colorbox-min.js"></script>
 <!-- notification plugin -->
-<script src="js/jquery.noty.js"></script>
+<script src="/js/jquery.noty.js"></script>
 <!-- library for making tables responsive -->
-<script src="bower_components/responsive-tables/responsive-tables.js"></script>
+<script src="/bower_components/responsive-tables/responsive-tables.js"></script>
 <!-- tour plugin -->
-<script src="bower_components/bootstrap-tour/build/js/bootstrap-tour.min.js"></script>
+<script src="/bower_components/bootstrap-tour/build/js/bootstrap-tour.min.js"></script>
 <!-- table plugin -->
-<script src="bower_components/bootstrap-table/dist/bootstrap-table.min.js"></script>
+<script src="/bower_components/bootstrap-table/dist/bootstrap-table.min.js"></script>
 <!-- star rating plugin -->
-<script src="js/jquery.raty.min.js"></script>
+<script src="/js/jquery.raty.min.js"></script>
 <!-- for iOS style toggle switch -->
-<script src="js/jquery.iphone.toggle.js"></script>
+<script src="/js/jquery.iphone.toggle.js"></script>
 <!-- autogrowing textarea plugin -->
-<script src="js/jquery.autogrow-textarea.js"></script>
+<script src="/js/jquery.autogrow-textarea.js"></script>
 <!-- multiple file upload plugin -->
-<script src="js/jquery.uploadify-3.1.min.js"></script>
+<script src="/js/jquery.uploadify-3.1.min.js"></script>
 <!-- history.js for cross-browser state change on ajax -->
-<script src="js/jquery.history.js"></script>
+<script src="/js/jquery.history.js"></script>
 <!-- application script for Charisma demo -->
-<script src="js/charisma.js"></script>
-<script src="js/Base64.js"></script>
-<script src="bower_components/jquery-datetime/jquery.datetimepicker.js"></script>
+<script src="/js/charisma.js"></script>
+<script src="/js/Base64.js"></script>
+<script src="/bower_components/jquery-datetime/jquery.datetimepicker.js"></script>
 </body>
 </html>
 

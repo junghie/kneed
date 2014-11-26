@@ -30,12 +30,12 @@
             </div>
             <div class="box-content">
                 
-                <table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
+                <table class="table table-striped table-bordered bootstrap-datatable responsive">
 				   <thead>
                         <td>MSISDN</td>
                         <td>MESSAGE</td>
                         <td>REFERENCEID</td>
-                        <td>TIMSTAMP</td>
+                        <td>DATE</td>
                         <td>AMOUNT</td>
                    </thead>
                    <?php 
@@ -73,6 +73,23 @@ $(document).ready(function() {
     // Load Datatables and run plugin on tables 
     //LoadDataTablesScripts(AllTables);
     //$('#button-save').attr('disabled','disabled');
+
+    var table = $('.table').DataTable({
+        tableTools: {
+            "sSwfPath": "bower_components/datatables/copy_csv_xls_pdf.swf",
+            "aButtons": [
+                "csv",
+                "xls",
+                "pdf",
+                "print"
+            ]
+        },
+        "bAutoWidth": false
+    });
+    
+    var tt = new $.fn.dataTable.TableTools( table );
+ 
+    $( tt.fnContainer() ).insertBefore('div.dataTables_wrapper');
     
 });
 </script>

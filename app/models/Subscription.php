@@ -14,6 +14,14 @@ class Subscription extends Eloquent {
     // OR set guarded to an empty array to allow mass assignment of every field
     protected $guarded = array();
 
+    public static function validate($input){
+
+        $rules = array(
+                'reportname'     => 'Unique:subscriptions,KEYWORDID,null'
+        );
+
+        return Validator::make($input, $rules);
+    }
 
     public function scopeGetGroup($query, $msisdn)
     {

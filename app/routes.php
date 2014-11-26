@@ -11,7 +11,15 @@
 |
 */
 
-Route::get('test',function(){
+Route::any('test',function(){
+
+	$contact_array = Contact::where('KNEEDID','=',Session::get('user')->ID)->get();
+	$contactarr = array();
+			foreach($contact_array as $contact){
+				array_push($contactarr,array("KEYWORDID" => 6, "MSISDN"=>$contact->MSISDN));
+			}
+			//print_r($contactarr);
+			//DB::table('subscriptions')->insert($contactarr);
 
 					/*ChikkaApi::sendsms(array(
 							"message_type" => "SEND",
@@ -25,7 +33,7 @@ Route::get('test',function(){
 					);*/
 //message_type=REPLY&mobile_number=639324572856&shortcode=292908299&message_id=uzVHiwaLMCY66Y08XkUbblww2lm4i45z&message=<p>SEND MONEY P2P</p>&request_id=5048303030303053554E303030303239323930303031303030303030303037393030303036333933323435373238353630303030313331303134313431363531&request_cost=FREE&client_id=367364d5f1d02327797c660d2ee94bc76ce56cba9b46fcd28acf448adecb6945&secret_key=f0a1c1fb0a8576908bb191e2051c14f9ce37ae8709e48d7231efa928b5691df5
 
-				ChikkaApi::sendreply(
+				/*ChikkaApi::sendreply(
 									array(
 										"message_type" => "REPLY",
 										"mobile_number" => "639324572856",
@@ -37,7 +45,7 @@ Route::get('test',function(){
 										"client_id" => ChikkaApi::getClientId(),
 										"secret_key" => ChikkaApi::getSecretKey()
 									)
-							);
+							);*/
 });
 
 Route::get('/', function()
@@ -82,12 +90,14 @@ Route::get('signup', function(){
 
 
 Route::get('polls/{id}', function($id){
-	if(!(isset(Session::get('user')->MSISDN))){
-		return View::make('signup');
-	}else{
-		return Redirect::to('/home');	
-	}
+	$poll = Poll::where("CODE","=",$id)->get();
+	$total_votes = PollDetails::select(DB::raw('SUM(VOTES) as TOTAL'))
+				    ->groupBy('POLLID')
+                    ->having("POLLID","=",$poll[0]->ID)->get();
+	$arr = array('poll' => $poll, 'totalvotes' => $total_votes[0]->TOTAL);
+	return View::make('polls.view',$arr);
 });
+
 
 
 Route::group(array("before"=>array("auth","updatevars")), function(){
@@ -96,13 +106,19 @@ Route::group(array("before"=>array("auth","updatevars")), function(){
 	Route::any('keywords','KeywordController@index');
 	Route::any('packages','HomeController@packages');
 	Route::any('keywords-update','KeywordController@index_update');
+	Route::any('keywords-buy','KeywordController@buy');
+	Route::any('keywords-purchase','KeywordController@keyword_purchase');
 	Route::any('keywords-delete','KeywordController@index_delete');
 	Route::any('keywords-getlist','KeywordController@getkeyword');
+	Route::any('change-password','HomeController@change_password');
 
 	Route::any('subscriptions','SubscriptionController@index');
 	Route::any('contacts','SubscriptionController@contact_index');
 	Route::any('contacts-manage','SubscriptionController@contact_manage');
 	Route::any('contacts-group','SubscriptionController@contact_group');
+	Route::any('contacts-grouplist','SubscriptionController@contact_grouplist');
+	Route::any('contacts-import','SubscriptionController@contact_import');
+	Route::any('contacts-update/{id}/{token}','SubscriptionController@contact_update');
 
 	Route::get('polls-create','PollController@index');
 	Route::post('polls-create','PollController@save');
@@ -117,8 +133,11 @@ Route::group(array("before"=>array("auth","updatevars")), function(){
 
 	Route::any('push-contact-update','SubscriptionController@contact_update');
 	Route::any('push-contact-add','SubscriptionController@contact_save');
+	Route::any('push-contact-update','SubscriptionController@contact_update_save');
+	Route::any('push-contact-import','SubscriptionController@contact_import_save');
 	Route::any('push-group-add','SubscriptionController@contact_group_save');
 
+	Route::any('report-transactions','HomeController@transactions');
 	Route::any('report-keyword','KeywordController@report');
 	Route::any('report-mo','HomeController@mobileOriginatedReport');
 	Route::any('report-mt','HomeController@mobileTerminatedReport');
@@ -139,5 +158,24 @@ Route::group(array("prefix" =>"api"),function(){
 
 	Route::post('chikka/notification/receiver','ChikkaApiController@notification');
 	Route::post('chikka/message/receiver','ChikkaApiController@messageReceiver');	
+
+});
+
+//admin routes
+Route::group(array("prefix" => "YWRtaW5pc3RyYXRvcg"), function(){
+
+	Route::get('/', function()
+	{
+		if(!(isset(Session::get('user')->MSISDN))){
+			return View::make('admin.login');
+		}else{
+			return Redirect::to('dashboard');	
+		}
+	});
+
+});
+
+
+Route::group(array("prefix" => "YWRtaW5pc3RyYXRvcg","before"=>array("auth","updatevars")), function(){
 
 });

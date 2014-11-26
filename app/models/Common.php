@@ -68,4 +68,8 @@ public static function arrayStripTags($array)
     return true;
  }
 
+ public static function getreferenceid(){
+    return date('Ymd') . strtoupper(str_random(24));
+ }
+
 }

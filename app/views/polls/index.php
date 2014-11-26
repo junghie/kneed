@@ -9,15 +9,12 @@
     </ul>
 </div>
 
-<div id="success" class="alert alert-success" style="display:none;">
+<?php if(isset($flash) && $flash == 0){ ?>
+<div id="success" class="alert alert-success">
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    <strong>Well done!</strong> You successfully save the record.
+                    <strong>Well done!</strong> You successfully saved the record.
 </div>
-
-<div id="failed" class="alert alert-info" style="display:none;">
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    <strong>Well done!</strong> You successfully save the record.
-</div>
+<?php }?>
 
 
 <div class="row">
@@ -36,12 +33,27 @@
                         <label for="reportname">Description</label>
                         <input type="text" name="n_description" class="form-control" id="n_description" placeholder="Description">
                     </div>
-                    
+                    <div class="form-group">
+                        <label for="schedule">End Date</label>
+                        <div class="input-group date">
+                          <input class="form-control" id="dp3" name="n_sched" type="text" value="<?= date('Y-m-d H:00'); ?>">
+                          <span class="input-group-addon addon" id="open"><i class="glyphicon glyphicon-calendar"></i></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                    <label for="notify">Notify Contacts</label>
+                    <select id="n_contacts" name="n_contacts[]" multiple class="form-control" data-rel="chosen">
+                              
+                                 <?php foreach($keywords as $cnt){ ?>
+                                        <option value="<?= $cnt->ID ?>"><?= $cnt->KEYWORD ?></option>
+                                <?php } ?> 
+                    </select>
+                    </div>                    
                     <div class="form-group clonedInput" id="entry1">
                         <label class="heading-reference" for="option">Option 1</label>
-                        <input type="text" class="form-control" name="n_option[]" id="n_option" placeholder="Option">
+                        <!--<input type="text" class="form-control" name="n_option[]" id="n_option" placeholder="Option">-->
                         <input type="text" class="form-control" name="n_option_description[]" id="n_option_description" placeholder="Option Description">
-                        <input type="file" id="n_file" name="n_file[]" value="Image">
+                        <input type="file" id="n_file" name="n_file[]" value="Image" style="visibility:hidden;">
                     </div>
                     <div class="form-group">
                     <input type="button" id="btnAdd" value="Add option">
@@ -97,5 +109,41 @@ $(function () {
     });
      $('#btnDel').attr('disabled', true);
 });
+
+$(document).ready(function () {
+    $('#dp3').datetimepicker();
+});
+
+$('#open').click(function(){
+    $('#dp3').datetimepicker('show');
+});
+
+
+change();
+function change(){
+    
+        var service_url = "keywords-getlist";
+        var params = {group:2};
+
+        $.post(
+           service_url,params,
+           function(result,status){
+                console.log(result);
+                if(status == 'success'){
+                   report_data = JSON.parse(result);
+                   var listitem = '<option value="" disabled selected>ALL</option>';                        
+                   for (x in report_data) {         
+                    if(report_data[x].ISGROUP !== 1){            
+                        listitem += '<option value="'+ report_data[x].ID +'">' + report_data[x].KEYWORD + '</option>';
+                    }
+                        //apply some effect on change, like blinking the color of modified cell...
+                   }
+
+                    $('#n_members').html(listitem);
+                }else{
+                   
+                }           
+        });
+}
 
 </script>

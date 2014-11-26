@@ -2,12 +2,15 @@
 
 class ChikkaApiController extends BaseController {
 
-	const REPLY_AMOUNT = "2.50";
-	const SEND_AMOUNT = ".65";
-	const STOP_AMOUNT = "2.50";
+	const REPLY_AMOUNT = "FREE";
+	const SEND_AMOUNT = "FREE";
+	const STOP_AMOUNT = "FREE";
+	const VOTE_AMOUNT = "FREE";
 
 	public static function getReplyAmount(){ return self::REPLY_AMOUNT; }
 	public static function getSendAmount(){ return self::SEND_AMOUNT; }
+	public static function getVoteAmount(){ return self::VOTE_AMOUNT; }
+	public static function getStopAmount(){ return self::STOP_AMOUNT; }
 
 	public function notification()
 	{
@@ -46,7 +49,7 @@ class ChikkaApiController extends BaseController {
 						->where("KEYWORDID", "=", $obj->ID)
 						->delete();
 
-			$referenceid = str_random(32);
+			$referenceid = Common::getreferenceid();
 			SmppHits::create(array(
 								"MSISDN" => Input::get('mobile_number'),
 								"MESSAGE" => Input::get('message'),
@@ -61,7 +64,7 @@ class ChikkaApiController extends BaseController {
 								"REFERENCEID" => $referenceid,
 								"KNEEDID" => $obj->KNEEDID,
 								"TYPE"  => "REPLY",
-								"SMSCOST" => $this->getStopAmount(),
+								"SMSCOST" => $this->getVoteAmount(),
 								"REQUESTID" => Input::get('request_id')
 								)
 						);
@@ -69,44 +72,7 @@ class ChikkaApiController extends BaseController {
 			//send message
 			return Response::json(array('status' => 'ok', 
 			'message'=> base64_decode($obj->MESSAGE) ,200));	
-			elseif($message[0] == "VOTE"){
 			
-			$referenceid = str_random(32);
-			SmppHits::create(array(
-								"MSISDN" => Input::get('mobile_number'),
-								"MESSAGE" => Input::get('message'),
-								"REFERENCEID" => $referenceid,
-								"KNEEDID" => $obj->KNEEDID,
-								"REQUEST" => json_encode(Input::all())
-								));
-
-			//get vote
-			$poll = Poll::where("CODE","=",$message[1])->get();
-			$polldetails = PollDetails::where("POLLID","=",$poll->ID)->where("OPTION","=",$message[2])->get();
-
-			if($polldetails->count() >= 1){
-				PollDetails::where("POLLID","=",$poll->id)
-							 ->where("OPTION","=",$message[2])
-							 ->update(array("VOTES" => $polldetails->VOTES + 1));
-			}
-
-
-			SmppPndg::create(
-							array(
-								"MSISDN" => Input::get('mobile_number'),
-								"MESSAGE" => "STOP SUCCESFULLY " . $keyword ,
-								"REFERENCEID" => $referenceid,
-								"KNEEDID" => $obj->KNEEDID,
-								"TYPE"  => "REPLY",
-								"SMSCOST" => $this->getStopAmount(),
-								"REQUESTID" => Input::get('request_id')
-								)
-						);
-
-			//send message
-			return Response::json(array('status' => 'ok', 
-			'message'=> base64_decode($obj->MESSAGE) ,200));
-
 			}else{
 				$referenceid = str_random(32);
 				ChikkaApi::sendreply(
@@ -123,13 +89,77 @@ class ChikkaApiController extends BaseController {
 									)
 							);
 				return Response::json(array('status' => 'ok', 
-				'message'=> base64_decode($obj->MESSAGE) ,200));	
+				'message'=> "FAILED",200));	
+			}
+
+		}elseif($message[0] == "VOTE"){
+
+			$poll = Poll::where("CODE","=",$message[1])->get()[0];
+			if(!empty($poll->ID)){
+				$referenceid = str_random(32);
+				SmppHits::create(array(
+									"MSISDN" => Input::get('mobile_number'),
+									"MESSAGE" => Input::get('message'),
+									"REFERENCEID" => $referenceid,
+									"KNEEDID" => $poll->KNEEDID,
+									"REQUEST" => json_encode(Input::all())
+									));
+
+				//get vote
+				
+				$polldetails = PollDetails::where("POLLID","=",$poll->ID)->where("OPTION","=",$message[2])->get();
+				
+				if($polldetails->count() >= 1){
+					PollDetails::where("POLLID","=",$poll->ID)
+								 ->where("OPTION","=",$message[2])
+								 ->update(array("VOTES" => $polldetails[0]->VOTES + 1));
+				}
+
+
+				SmppPndg::create(
+								array(
+									"MSISDN" => Input::get('mobile_number'),
+									"MESSAGE" => "THANK YOU FOR VOTING" ,
+									"REFERENCEID" => $referenceid,
+									"KNEEDID" => $poll->KNEEDID,
+									"TYPE"  => "REPLY",
+									"SMSCOST" => $this->getStopAmount(),
+									"REQUESTID" => Input::get('request_id')
+									)
+							);
+
+				//send message
+				return Response::json(array('status' => 'ok', 
+				'message'=> "SUCCESS" ,200));
+			}else{
+				$referenceid = str_random(32);
+				ChikkaApi::sendreply(
+									array(
+										"message_type" => "REPLY",
+										"mobile_number" => Input::get('mobile_number'),
+										"shortcode" => ChikkaApi::getShortCode(),
+										"message_id" => $referenceid,
+										"message" => "TEST",
+										"request_id" => Input::get('request_id'),
+										"request_cost" => $this->getReplyAmount(),
+										"client_id" => ChikkaApi::getClientId(),
+										"secret_key" => ChikkaApi::getSecretKey()
+									)
+							);
+				return Response::json(array('status' => 'ok', 
+				'message'=> "FAILED",200));	
 			}
 
 		}else{
 
+			$message = explode("_",strtoupper(Input::get('message')));
 			$keyword = $message[0];
 			$obj = Keyword::where("KEYWORD", "=", $keyword)->where("ISGROUP","=","0")->get();	
+
+			$firstname = (empty($mesage[1])) ? "" : $message[1];
+			$lastname =  (empty($mesage[2])) ? "" : $message[2];
+			$location  = (empty($mesage[3])) ? "" : $message[3];
+			$birthdate = (empty($mesage[4])) ? date('Y-m-d') : $message[4];
 
 			if($obj->count() > 0){
 
@@ -139,6 +169,10 @@ class ChikkaApiController extends BaseController {
 					array(
 							"KEYWORDID" => $obj->ID,
 							"MSISDN"  => $msisdn
+							"FIRSTNAME" => $message[1],
+							"LASTNAME" => $message[2],
+							"LOCATION" => $message[3],
+							"BIRTHDATE" => $message[4]
 						)
 				);
 			$referenceid = str_random(32);
@@ -181,7 +215,7 @@ class ChikkaApiController extends BaseController {
 									)
 							);
 				return Response::json(array('status' => 'ok', 
-				'message'=> base64_decode($obj->MESSAGE) ,200));	
+				'message'=> "FAILED" ,200));	
 			}
 			
 		}

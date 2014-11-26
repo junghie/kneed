@@ -92,13 +92,21 @@ Route::filter('csrf', function()
 
 Route::filter('updatevars', function(){
 	if(isset(Session::get('user')->MSISDN)){
-		Auth::logout();
-		Auth::loginUsingId(Session::get('user')->ID);
-		Session::put('user',Auth::user());
+		//Auth::logout();
+		//Auth::loginUsingId(Session::get('user')->ID);
+		//Session::put('user',Auth::user());
 
 		//get accounttype
 		$accounttypes = Accounttypes::get();
+		$keywords_package ="";// SystemInfo::getProperty('KEYWORDPACKAGE');
 		Session::put('accounttypes',$accounttypes);
+		if(empty($keywords_package)) $keywords_package = json_encode(array(
+				array("package"=>"A","amount"=>"10"),
+				array("package"=>"B","amount"=>"30"),
+				array("package"=>"C","amount"=>"40"),
+			));
+		
+		Session::put('keywordpackage',json_decode($keywords_package));
 	}
 }
 );

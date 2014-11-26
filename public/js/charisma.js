@@ -45,9 +45,9 @@ $(document).ready(function () {
 
     function switchTheme(themeName) {
         if (themeName == 'classic') {
-            $('#bs-css').attr('href', 'bower_components/bootstrap/dist/css/bootstrap.min.css');
+            $('#bs-css').attr('href', '/bower_components/bootstrap/dist/css/bootstrap.min.css');
         } else {
-            $('#bs-css').attr('href', 'css/bootstrap-' + themeName + '.min.css');
+            $('#bs-css').attr('href', '/css/bootstrap-' + themeName + '.min.css');
         }
 
         $('#themes i').removeClass('glyphicon glyphicon-ok whitespace').addClass('whitespace');
@@ -277,6 +277,7 @@ function docReady() {
     $('.datatable').dataTable({
         "sDom": "<'row'<'col-md-6'l><'col-md-6'f>r>t<'row'<'col-md-12'i><'col-md-12 center-block'p>>",
         "sPaginationType": "bootstrap",
+        "dom": 'T<"clear">lfrtip',
         "oLanguage": {
             "sLengthMenu": "_MENU_ records per page"
         }
@@ -292,11 +293,21 @@ function docReady() {
         else                       $('i', $(this)).removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
         $target.slideToggle();
     });
+
     $('.btn-setting').click(function (e) {
         e.preventDefault();
         $('#myModal').modal('show');
     });
 
+    $('.btn-keyword-purchase').click(function (e) {
+        e.preventDefault();
+        $('#myModal').modal('show');
+    });
+
+    $('.btn-change-password').click(function (e) {
+        e.preventDefault();
+        $('#changePassword').modal('show');
+    });
 
     $('#calendar').fullCalendar({
         header: {

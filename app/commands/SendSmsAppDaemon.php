@@ -65,15 +65,27 @@ class SendSmsAppDaemon extends Command {
 							$msgcount = strip_tags($pndg->MESSAGE);
 							$count = ceil(count($msgcount)/140);
 							$fee = $count * $pndg->SMSCOST;
+							$credit = $ids->CREDIT;
 
 							if($ids->CREDIT < $fee){
 								SmppPull::where("REFERENCEID","=",$pndg->REFERENCEID)->update(array('STATUS' => "FAILED NOT ENOUGH BALANCE"));
+								return;
 							}
-
+							$credit = $ids->CREDIT;
 							$ids->CREDIT = $ids->CREDIT - $fee;
 							$ids->save();	
 							SmppPull::where("REFERENCEID","=",$pndg->REFERENCEID)->update(array('TOTALCOST' => $fee));
-
+							Transaction::create(
+									array(
+										"KNEEDID" =>$pndg->KNEEDID,
+										"TRANSACTIONTYPE" => "SEND",
+										"AMOUNT" => $fee,
+										"BALANCEBEFORE" => $credit,
+										"BALANCEAFTER" => $credit - $fee,
+										"EXTENDEDDATA" => "SMS",
+										"REFERENCEID" => $pndg->REFERENCEID
+									)
+								);
 						}
 
 						ChikkaApi::sendsms(array(
@@ -103,11 +115,24 @@ class SendSmsAppDaemon extends Command {
 									)
 							);
 
-						
+						$profit = 0;
 						if($pndg->SMSCOST > 0){
 							$profit = $pndg->SMSCOST * .30;
+							$commission = $ids->COMMISSION;
 							$ids->COMMISSION = $ids->COMMISSION + $profit;
 							$ids->save();	
+
+							Transaction::create(
+									array(
+										"KNEEDID" =>$pndg->KNEEDID,
+										"TRANSACTIONTYPE" => "SUBSCRIPTION",
+										"AMOUNT" => $profit,
+										"BALANCEBEFORE" => $commission,
+										"BALANCEAFTER" => $commission + $profit,
+										"EXTENDEDDATA" => "SMS",
+										"REFERENCEID" => $pndg->REFERENCEID
+									)
+								);
 						}
 
 						SmppHits::where("REFERENCEID","=",$pndg->REFERENCEID)->update(array('AMOUNT' => $profit));

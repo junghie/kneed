@@ -1,7 +1,7 @@
 <?php
 
 return array(
-
+	
 	/*
 	|--------------------------------------------------------------------------
 	| Validation Language Lines
@@ -86,6 +86,22 @@ return array(
 		'attribute-name' => array(
 			'rule-name' => 'custom-message',
 		),
+		'KEYWORD' => array(
+			'unique' => 'The keyword has already been taken',
+			'required' => 'The Keyword is required',
+			),
+		'FIRSTNAME' => array(
+			'unique' => 'The First Name has already been taken',
+			'required' => 'The First Name is required',
+			),
+		'LASTNAME' => array(
+			'unique' => 'The Last Name has already been taken',
+			'required' => 'The Last Name is required',
+			),
+		'MSISDN' => array(
+			'unique' => 'The Mobile Number has already been taken',
+			'required' => 'The Mobile Number is required',
+			)
 	),
 
 	/*

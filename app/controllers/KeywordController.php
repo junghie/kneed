@@ -9,7 +9,14 @@ class KeywordController extends BaseController {
 	public $layout = "header";
 
 	public function index(){
+		$accounttype = Session::get('user')->ACCOUNTTYPEID;
 		$view = View::make('keywords.index');	
+
+		$view->count = Session::get('accounttypes')[$accounttype]->KEYWORDLIMIT + Session::get('user')->ADDITIONALKEYWORD;
+		$view->keywordcount = Keyword::where('KNEEDID',"=",Session::get('user')->ID)
+							->where('ISGROUP','=','0')->get()->count();
+
+
 		$this->layout->content = $view;
 	}
 
@@ -25,20 +32,26 @@ class KeywordController extends BaseController {
 	}
 
 	public function save(){
+
 		$v = Keyword::validate(Input::all());
 		$accounttype = Session::get('user')->ACCOUNTTYPEID;
-		$count = Session::get('accounttypes')[$accounttype]->KEYWORDLIMIT;
-		$keywordcount = Keyword::where('KNEEDID',"=",Session::get('user')->ID)->get()->count();
+		$count = Session::get('accounttypes')[$accounttype]->KEYWORDLIMIT +  Session::get('user')->ADDITIONALKEYWORD;
+		$keywordcount = Keyword::where('KNEEDID',"=",Session::get('user')->ID)->where('ISGROUP','=','0')->get()->count();
 
 		if($keywordcount > $count){
 			return Response::json(array('flash' => Lang::get('notification.error'), 
-			'data'=> Lang::get('notification.exceedlimit') . '- contact support' , 'title' => Lang::get('notification.error')),200);	
+			'data'=> Lang::get('notification.exceedlimit') , 'title' => Lang::get('notification.error')),200);	
 		}
 
-		//if($v->passes){
+		if(count(strip_tags(base64_decode(Input::get('datasrc')))) > 140) {
+			return Response::json(array('flash' => Lang::get('notification.error'), 
+			'data'=> Lang::get('notification.error_welcome_message_length') , 'title' => Lang::get('notification.error')),200);	
+		}
+
+		if($v->passes()){
 		Keyword::create(
 			array(
-				'KEYWORD' => strtoupper(Input::get('reportname')),
+				'KEYWORD' => strtoupper(Input::get('KEYWORD')),
 				'MESSAGE' => Input::get('datasrc'),
 				'KNEEDID'=> Session::get('user')->ID
 				)
@@ -47,10 +60,10 @@ class KeywordController extends BaseController {
        
 		return Response::json(array('flash' => Lang::get('notification.success'), 
 			'data'=> $accounttype . ' ' . $count . ' ' . $keywordcount, 'title' => Lang::get('notification.success')),200);
-		//}
+		}
 
-		//return Response::json(array('flash' => Lang::get('notification.success'), 
-		//	'data'=> $v, 'title' => Lang::get('notification.success')),500);
+		return Response::json(array('flash' => Lang::get('notification.error'), 
+			'data'=> $v->getMessageBag()->toArray(), 'title' => Lang::get('notification.error')),200);
 	}
 
 	public function update(){
@@ -71,6 +84,14 @@ class KeywordController extends BaseController {
 	}
 
 	public function getKeyword(){
+		$group = Input::get('group');
+		if($group < 2){
+			$data = Keyword::where('KNEEDID',"=",Session::get('user')->ID)
+			->where('ISGROUP','=',$group)->get()->toJson();
+			return $data;	
+			die();
+		}
+
 		$data = Keyword::where('KNEEDID',"=",Session::get('user')->ID)->get()->toJson();
 		return $data;
 	}
@@ -80,8 +101,47 @@ class KeywordController extends BaseController {
 		$view = View::make('reports.keywords');	
 		//$view->keywords = Keyword::where('KNEEDID',"=",Session::get('user')->ID)->get();
 		$view->keywords = DB::select(DB::raw("SELECT a.KEYWORD,a.MESSAGE, b.SUBCOUNT FROM kneed_keywords a
-									LEFT JOIN (SELECT COUNT(*) SUBCOUNT, KEYWORDID FROM kneed_subscriptions) b
-									ON a.ID = b.KEYWORDID WHERE KNEEDID = '" . Session::get('user')->ID . "'"));
+									LEFT JOIN (SELECT COUNT(*) SUBCOUNT, KEYWORDID FROM kneed_subscriptions GROUP BY KEYWORDID) b
+									ON a.ID = b.KEYWORDID WHERE ISGROUP = 0 AND KNEEDID = '" . Session::get('user')->ID . "'"));
 		$this->layout->content = $view;
+	}
+
+	public function buy(){
+		$view = View::make('keywords.buy');
+		$this->layout->content = $view;
+	}
+
+	public function keyword_purchase(){
+		$password = Input::get('password');
+		if(!Hash::check($password,Session::get('user')->PASSWORD)){
+		      //return error oldpassword not match
+		      return Response::json(array('flash' => Lang::get('notification.invalid_password'), 'data'=> Input::all(), 'title' => Lang::get('notification.error')),200);
+		 }
+
+		$ids = MobileIds::find(Session::get('user')->ID);
+		$keyword_prices = "0";
+		 foreach(Session::get('keywordpackage') as $package){
+		 	if($package->package == Input::get('n_package'))
+		 		$keyword_prices = $package->amount;
+		 };
+		$credit = $ids->CREDIT;
+		$ids->CREDIT = $ids->CREDIT - $keyword_prices;
+		$ids->ADDITIONALKEYWORD = $ids->ADDITIONALKEYWORD + ($keyword_prices / 10);
+		$ids->save();	
+		
+		Transaction::create(
+				array(
+					"KNEEDID" =>Session::get('user')->ID,
+					"TRANSACTIONTYPE" => "PURCHASE",
+					"AMOUNT" => $keyword_prices,
+					"BALANCEBEFORE" => $credit,
+					"BALANCEAFTER" => $credit - $keyword_prices,
+					"EXTENDEDDATA" => "KEYWORD",
+					"REFERENCEID" => Common::getreferenceid()
+					)
+				);
+		
+		return Response::json(array('flash' => Lang::get('notification.success'), 
+			'data'=> $keyword_prices, 'title' => Lang::get('notification.success')),200);
 	}
 }

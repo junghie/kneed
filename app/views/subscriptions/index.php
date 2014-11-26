@@ -35,6 +35,20 @@
                         </select>
                     </div>
                     <div class="form-group">
+                        <label for="datefr">Date From</label>
+                        <div class="input-group date">
+                          <input class="form-control" id="datefr" type="text" value="<?= date('Y-m-d'); ?>">
+                          <span class="input-group-addon addon" id="open-datefr"><i class="glyphicon glyphicon-calendar"></i></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="dateto">Date To</label>
+                        <div class="input-group date">
+                          <input class="form-control" id="dateto" type="text" value="<?= date('Y-m-d'); ?>">
+                          <span class="input-group-addon addon" id="open-dateto"><i class="glyphicon glyphicon-calendar"></i></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
                     <button type="submit" class="btn btn-default">Submit</button>
                     </div>
                   
@@ -42,10 +56,14 @@
                     <div class="form-group">
                         <h3>KEYWORD : <?= $keyword->KEYWORD; ?></h3>
                         <h3>SUBSCRIBERS : <?= $subscriptions->count(); ?></h3>
-                        <table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
+                        <table class="table table-striped table-bordered bootstrap-datatable responsive">
                            <thead>
-                                <td>MSISDN</td>
-                                <td>TIMESTAMP</td>
+                                <td>Mobile Number</td>
+                                <td>First Name</td>
+                                <td>Last Name</td>
+                                <td>Location</td>
+                                <td>BirthDate</td>
+                                <td>Date of Subscription</td>
                            </thead>
                            <?php 
                                 $count = 0;
@@ -55,7 +73,11 @@
                                 ?>
                                 <tr class="<?= $class ?>">
                                     <td align="center"><?= $subs->MSISDN ?></td>
-                                    <td align="center"><?= date_format(date_create($subs->TIMESTAMP),'m-d-Y') ?></td>
+                                    <td align="center"><?= $subs->FIRSTNAME ?></td>
+                                    <td align="center"><?= $subs->LASTNAME ?></td>
+                                    <td align="center"><?= $subs->LOCATION ?></td>
+                                    <td align="center"><?= date_format(date_create($subs->BIRTHDATE),'Y-m-d') ?></td>
+                                    <td align="center"><?= date_format(date_create($subs->TIMESTAMP),'Y-m-d H:i:s') ?></td>
                                     
                                 </tr>
                             <?php $count++; } ?>    
@@ -81,12 +103,44 @@ function show_report(obj){
     console.log(report_data);
 }
 
+$(document).ready(function () {
+    $('#datefr').datetimepicker({format:'Y-m-d',timepicker:false});
+    $('#dateto').datetimepicker({format:'Y-m-d',timepicker:false});
+
+<?php if(!empty($keyword->KEYWORD)){ ?>
+    var table = $('.table').DataTable({
+        tableTools: {
+            "sSwfPath": "bower_components/datatables/copy_csv_xls_pdf.swf",
+            "aButtons": [
+                "csv",
+                "xls",
+                "pdf",
+                "print"
+            ]
+        },
+        "bAutoWidth": false
+    });
+    
+    var tt = new $.fn.dataTable.TableTools( table );
+ 
+    $( tt.fnContainer() ).insertBefore('div.dataTables_wrapper');
+<?php } ?>
+});
+
+$('#open-datefr').click(function(){
+    $('#datefr').datetimepicker('show');
+});
+
+$('#open-dateto').click(function(){
+    $('#dateto').datetimepicker('show');
+});
+
 change();
 function change(){
     
         var service_url = "keywords-getlist";
         tinyMCE.triggerSave();
-        var params = [];
+        var params = {group:"0"};
 
         $.post(
            service_url,params,
@@ -94,7 +148,7 @@ function change(){
                 console.log(result);
                 if(status == 'success'){
                    report_data = JSON.parse(result);
-                   var listitem = '<option value="" disabled selected>Select your option</option>';                        
+                   var listitem = '<option value="" disabled selected>Select Keyword</option>';                        
                    for (x in report_data) {                     
                     listitem += '<option value="'+ report_data[x].ID +'">' + report_data[x].KEYWORD + '</option>';
                         //apply some effect on change, like blinking the color of modified cell...

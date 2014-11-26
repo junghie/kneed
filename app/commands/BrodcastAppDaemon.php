@@ -40,13 +40,13 @@ class BrodcastAppDaemon extends Command {
 		//sytax
 		//
 		
-			$brodcastsms = BrodcastSms::where('STATUS', '=', 'PENDING')->get();
+			$brodcastsms = BrodcastSms::where('STATUS', '=', 'PENDING')->where("SCHEDULE", "<", date("Y-m-d H:i:s"))->get();
 
 			foreach($brodcastsms as $bs){
 				$subscriptions = Subscription::where('KEYWORDID','=', $bs->KEYWORDID)
 											  ->where('ISENABLED', '=', '1')->get();
 				foreach($subscriptions as $subs){
-					$referenceid = str_random(32);
+					$referenceid = Common::getreferenceid();
 					SmppPndg::create(
 							array(
 								"MSISDN" => $subs->MSISDN,
@@ -58,7 +58,7 @@ class BrodcastAppDaemon extends Command {
 								)
 						);
 				}
-				BrodcastSms::where("ID","=",$bs->ID)->update(array('STATUS' => 'PROCESSING'));
+				BrodcastSms::where("ID","=",$bs->ID)->update(array('STATUS' => 'PROCESSED'));
 			}
 		
     

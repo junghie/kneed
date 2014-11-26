@@ -14,7 +14,7 @@
 
 <div id="success" class="alert alert-success" style="display:none;">
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    <strong>Well done!</strong> You successfully Remove the record.
+                    <strong>Well done!</strong> You have successfully Removed the record.
 </div>
 
 <div class="row">

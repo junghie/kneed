@@ -16,7 +16,7 @@
         ===
     -->
     <meta charset="utf-8">
-    <title>AT</title>
+    <title>CONTEXTO</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Charisma, a fully featured, responsive, HTML5, Bootstrap admin template.">
     <meta name="author" content="Muhammad Usman">
@@ -58,7 +58,7 @@
         
     <div class="row">
         <div class="col-md-12 center login-header">
-            <h2>Welcome to AT</h2>
+            <h2>Welcome to Contexto</h2>
         </div>
         <!--/span-->
     </div><!--/row-->

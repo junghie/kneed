@@ -28,18 +28,20 @@
             <div class="box-content">
                 <form role="form">                    
                     <div class="form-group">
-                        <label for="keyword">Keyword</label>
+                        <label for="keyword">Group Name</label>
                         <input type="text" class="form-control" id="n_keyword" placeholder="Keyword">
                     </div>
 
                     <div class="form-group">
                         <label for="members">Members</label>
-                          
+                        
                         <select name="members" id="n_members" multiple class="form-control" data-rel="chosen">
+                                <option value="ALL">ALL</option>
                                  <?php foreach($contacts as $cnt){ ?>
                                         <option value="<?= $cnt->MSISDN ?>"><?= $cnt->FIRSTNAME . ' ' . $cnt->LASTNAME ?></option>
                                 <?php } ?>
                         </select>
+
                           
                     </div>
                    
@@ -59,7 +61,6 @@
 function create(obj){
     
         var service_url = "push-group-add";
-        alert($("#n_members").val());
         
         var params = {keyword:$("#n_keyword").val(),group:$("#n_members").val()};    
 
@@ -80,7 +81,24 @@ $(document).ready(function() {
     //LoadDataTablesScripts(AllTables);
     //$('#button-save').attr('disabled','disabled');
     //$("#members").listboxselector({
-    //});    
+    //});
+    
+    var table = $('.table').DataTable({
+        tableTools: {
+            "sSwfPath": "bower_components/datatables/copy_csv_xls_pdf.swf",
+            "aButtons": [
+                "csv",
+                "xls",
+                "pdf",
+                "print"
+            ]
+        },
+        "bAutoWidth": false
+    });
+    
+    var tt = new $.fn.dataTable.TableTools( table );
+ 
+    $( tt.fnContainer() ).insertBefore('div.dataTables_wrapper');    
 });
 
 

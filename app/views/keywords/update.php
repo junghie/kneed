@@ -14,7 +14,7 @@
 
 <div id="success" class="alert alert-success" style="display:none;">
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    <strong>Well done!</strong> You successfully save the record.
+                    <strong>Well done!</strong> You successfully saved the record.
 </div>
 
 <div class="row">
@@ -110,6 +110,7 @@ function create(obj){
                 if(status == 'success'){
                     $('#success').show();
                     change();
+                    tinyMCE.activeEditor.setContent('');
                 }else{
                    
                 }           
@@ -137,12 +138,12 @@ function change(){
     
         var service_url = "keywords-getlist";
         tinyMCE.triggerSave();
-        var params = [];
+        var params = {group:0};
 
         $.post(
            service_url,params,
            function(result,status){
-                console.log(result);
+                //console.log(result);
                 if(status == 'success'){
                    report_data = JSON.parse(result);
                    var listitem = '<option value="" disabled selected>Select your option</option>';                        

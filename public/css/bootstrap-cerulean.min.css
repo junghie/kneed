@@ -8,3 +8,6 @@
 
 
 .label-header{display:inline;padding:.2em .6em .3em;font-weight:bold;color:#ffffff;text-align:center;white-space:nowrap;vertical-align:baseline;border-radius:.25em}
+
+@media (max-width:480px){.navbar-brand-description{display:none;} .top-menu{display:none;}}
+@media (max-width:767px){.navbar-brand-description{display:none;} .top-menu{display:none;}}

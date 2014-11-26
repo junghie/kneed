@@ -1,7 +1,7 @@
 <?php
 
 class PollDetails extends Eloquent {
-	
+
 	protected $table = "polldetails";
 
 	public $timestamps = false;
@@ -13,4 +13,13 @@ class PollDetails extends Eloquent {
  
     // OR set guarded to an empty array to allow mass assignment of every field
     protected $guarded = array();
+
+
+    public function scopeGetGroup($query, $id)
+    {
+        $selectVals = $query        				
+        				->where("POLLID","=",$id);
+        
+        return $selectVals->get();
+    }
 }

@@ -30,7 +30,7 @@
             </div>
             <div class="box-content">
                 
-                <table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
+                <table class="table table-striped table-bordered bootstrap-datatable responsive">
 				   <thead>
                         <td>MOBILE NUMBER</td>
                         <td>FIRSTNAME</td>
@@ -54,9 +54,7 @@
                                 <?php } ?>
                             </td>
                             <td><span class="center-block">
-                                <a class="btn btn-info" href="#"><i class="glyphicon glyphicon-retweet icon-white"></i> Group</a>
-                                <a class="btn btn-info" href="#"><i class="glyphicon glyphicon-edit icon-white"></i> Edit</a>
-                                <a class="btn btn-danger" href="#"><i class="glyphicon glyphicon-edit icon-white"></i> Delete</a>
+                                <a class="btn btn-info" href="contacts-update/<?= $cnt->ID . '/' . Session::token() ?>"><i class="glyphicon glyphicon-edit icon-white"></i> View</a>                                
                             </span></td>
                         </tr>
                     <?php $count++; } ?>    
@@ -82,5 +80,21 @@ $(document).ready(function() {
     //LoadDataTablesScripts(AllTables);
     //$('#button-save').attr('disabled','disabled');
     
+    var table = $('.table').DataTable({
+        tableTools: {
+            "sSwfPath": "bower_components/datatables/copy_csv_xls_pdf.swf",
+            "aButtons": [
+                "csv",
+                "xls",
+                "pdf",
+                "print"
+            ]
+        },
+        "bAutoWidth": false
+    });
+    
+    var tt = new $.fn.dataTable.TableTools( table );
+ 
+    $( tt.fnContainer() ).insertBefore('div.dataTables_wrapper');
 });
 </script>

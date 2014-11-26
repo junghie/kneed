@@ -9,14 +9,22 @@
     </ul>
 </div>
 
+<?php if($keywordcount >= $count) { ?>
+    <div id="success" class="alert alert-success">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <strong>Keyword Limit Reached!</strong><a href="keywords-buy"> Click here </a> to get additional keywords.
+    </div>
+
+<?php }else{ ?>
+
 <div id="success" class="alert alert-success" style="display:none;">
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    <strong>Well done!</strong> You successfully save the record.
+                    <strong>Well done!</strong> You successfully saved the record.
 </div>
 
 <div id="failed" class="alert alert-info" style="display:none;">
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    <strong>Well done!</strong> You successfully save the record.
+                    <strong>Well done!</strong> You successfully saved the record.
 </div>
 
 
@@ -57,7 +65,7 @@ function create(obj){
     
         var service_url = "push-keyword-add";
         tinyMCE.triggerSave();
-        var params = {reportname:$("#n_reportname").val(),datasrc:Base64.encode($("#data_src_new").val())};    
+        var params = {KEYWORD:$("#n_reportname").val(),datasrc:Base64.encode($("#data_src_new").val())};    
 
         $.post(
            service_url,params,
@@ -66,10 +74,21 @@ function create(obj){
                 if(result.flash.indexOf("success") > -1){
                    $('#success').show();
                 }else{
-                    $('#failed').html(result.data);
-                    $('#failed').show();                   
+                    if(typeof result.data === 'object'){
+                        var errorString = "";
+                        $.each( result.data, function( key, value) {
+                            errorString += '<li>' + value + '</li>';
+                        });
+
+                        $('#failed').html(errorString);
+                        $('#failed').show();             
+                    } else {
+                        $('#failed').html(result.data);
+                        $('#failed').show();             
+                    }     
                 }           
         });
 }
 
 </script>
+<?php } ?>

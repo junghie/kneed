@@ -30,33 +30,33 @@
             </div>
             <div class="box-content">
                 
-                <table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
+                <table class="table table-striped table-bordered bootstrap-datatable  responsive">
 				   <thead>
-                        <td>MOBILE NUMBER</td>
-                        <td>FIRSTNAME</td>
-                        <td>LASTNAME</td>
-                        <td>GROUPS</td>
+                        <td>DESCRIPTION</td>
+                        <td>CODE</td>
+                        <td>URL</td>
+                        <td>RESULT</td>   
+                        <td>ENDDATE</td>                     
                         <td>ACTION</td>
                    </thead>
                    <?php 
                         $count = 0;                        
-                        foreach($contacts as $cnt){ 
+                        foreach($polls as $cnt){ 
                             
                             $class = ($count%2) ? "odd_gradeX" : "even_gradeC"; 
                         ?>
                         <tr class="<?= $class ?>">
-                            <td><span class="center-block"><?= $cnt->MSISDN ?></span></td>
-                            <td><span class="center-block"><?= $cnt->FIRSTNAME ?></span></td>                            
-                            <td><span class="center-block"><?= $cnt->LASTNAME ?></td>
-                            <td><span class="center-block">
-                                <?php foreach(Subscription::GetGroup($cnt->MSISDN) as $data){ ?>
-                                    <?= $data->KEYWORD ?> <br/>
+                            <td><span class="center-block"><?= $cnt->DESCRIPTION ?></span></td>
+                            <td><span class="center-block"><?= $cnt->CODE ?></span></td>                            
+                            <td><span class="center-block"><a href="<?= $cnt->URL?>" target="_blank"><?= URL::to($cnt->URL)?></a></td>
+                            <td><span>
+                                <?php foreach(PollDetails::GetGroup($cnt->ID) as $data){ ?>
+                                    DESCRIPTION : <?= $data->DESCRIPTION  ?>  VOTES : <?= $data->VOTES ?><br/>
                                 <?php } ?>
                             </td>
+                            <td><span class="center-block"><?= $cnt->ENDDATE ?></span></td>
                             <td><span class="center-block">
-                                <a class="btn btn-info" href="#"><i class="glyphicon glyphicon-retweet icon-white"></i> Group</a>
-                                <a class="btn btn-info" href="#"><i class="glyphicon glyphicon-edit icon-white"></i> Edit</a>
-                                <a class="btn btn-danger" href="#"><i class="glyphicon glyphicon-edit icon-white"></i> Delete</a>
+                                <a class="btn btn-info" href="#"><i class="glyphicon glyphicon-edit icon-white"></i> Update</a>                                
                             </span></td>
                         </tr>
                     <?php $count++; } ?>    
@@ -81,6 +81,23 @@ $(document).ready(function() {
     // Load Datatables and run plugin on tables 
     //LoadDataTablesScripts(AllTables);
     //$('#button-save').attr('disabled','disabled');
+
+    var table = $('.table').DataTable({
+        tableTools: {
+            "sSwfPath": "bower_components/datatables/copy_csv_xls_pdf.swf",
+            "aButtons": [
+                "csv",
+                "xls",
+                "pdf",
+                "print"
+            ]
+        },
+        "bAutoWidth": false
+    });
+    
+    var tt = new $.fn.dataTable.TableTools( table );
+ 
+    $( tt.fnContainer() ).insertBefore('div.dataTables_wrapper');
     
 });
 </script>

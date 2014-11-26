@@ -4,7 +4,7 @@
             <a href="#">Home</a>
         </li>
         <li>
-            <a href="#">Brodcast Sms</a>
+            <a href="#">Brodcast SMS</a>
         </li>
     </ul>
 </div>
@@ -18,7 +18,7 @@
     <div class="box col-md-12">
         <div class="box-inner">
             <div class="box-header well" data-original-title="">
-                <h2><i class="glyphicon glyphicon-edit"></i> Broadcast Sms</h2>
+                <h2><i class="glyphicon glyphicon-edit"></i> Broadcast SMS</h2>
 
                 <div class="box-icon">
                     <a href="#" class="btn btn-minimize btn-round btn-default"><i
@@ -28,7 +28,7 @@
             <div class="box-content">
                 <form role="form">
                     <div class="form-group">
-                        <label for="reportname">Keyword</label>
+                        <label for="reportname">Keyword/Group</label>
                         <select id="reportname" class="form-control" onchange="show_report(this);">
                                 <option value="" disabled selected>Select your option</option>                              
                         </select>
@@ -155,7 +155,7 @@ function change(){
             
         var service_url = "keywords-getlist";
         tinyMCE.triggerSave();
-        var params = [];
+        var params = {group:'2'};
 
         $.post(
            service_url,params,
